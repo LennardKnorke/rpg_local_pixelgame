@@ -3,6 +3,8 @@ In this pixelated adventure, players shall be able to play together levels with 
 Aims:
 - Lern Github
 - Game development in Python :))))))
+  - Singleplayer/ Coop Campaign
+  - Vs Mode
 - Networks
 - (Random Level Generation?)
 
