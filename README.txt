@@ -1,5 +1,10 @@
 # rpg_local_pixelgame
-In this pixelated adventure, players shall be able to play together levels with each other, level up and fight monsters. This is a learning project.
+In this pixelated adventure, players shall be able to play together levels with each other in a local network, level up and fight monsters. This is a learning project.
+Aims:
+- Lern Github
+- Game development in Python :))))))
+- Networks
+- (Random Level Generation?)
 
 So a few notes on general structure
 Main Folder
