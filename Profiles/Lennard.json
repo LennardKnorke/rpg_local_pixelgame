@@ -1,0 +1,54 @@
+{
+    "Level" : 0,
+    "christian" : {
+        "skilltree": {
+            "00": 0, 
+            "01" : 0, 
+            "02": 0, 
+            "03": 0,
+            "10": 0,
+            "11": 0,
+            "12": 0,
+            "13": 0,
+            "14": 0,
+            "15": 0,
+            "16": 0,
+            "17": 0
+        },
+        "weapons" :{
+            "base_ranged" : true,
+            "base_melee" : true
+        }, 
+        "holding_weapons" : {
+            "base_ranged" : true,
+            "base_melee" : true
+        }
+    },
+    "lennart" : {
+        "skilltree": {
+            "00": 0, 
+            "01" : 0, 
+            "02": 0, 
+            "03": 0,
+            "10": 0,
+            "11": 0,
+            "12": 0,
+            "13": 0,
+            "14": 0,
+            "15": 0,
+            "16": 0,
+            "17": 0
+            },
+            "weapons" :{
+                "base_ranged" : true,
+                "base_melee" : true
+            }, 
+            "holding_weapons" : {
+                "base_ranged" : true,
+                "base_melee" : true
+            }
+    },
+    "vsmaps" : {
+        "base_map" : "base_map"
+    }
+}
