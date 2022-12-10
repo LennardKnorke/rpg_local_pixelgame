@@ -1,1 +1,7 @@
-{"Screen_Size": 2, "Screen_Height": 720, "Screen_Width": 1280, "FPS": 60, "profile": "Lennard"}
+{
+  "Screen_Size": 2, 
+  "Screen_Height": 720, 
+  "Screen_Width": 1280, 
+  "FPS": 60, 
+  "profile": "Lennard"
+}
