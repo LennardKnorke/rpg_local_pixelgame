@@ -31,18 +31,12 @@
     ],
     "Layer_3":[
         {
-            "type":"ip_Bar",
-            "text":"Enter a local Ip adress"
-        },
+            "type":"adress",
+            "text":"Enter local Ip adress"
+        }, 
         {
-            "type":"ip_Bar",
-            "text":"Enter a port number"
-        }
-    ],
-    "Layer_4":[
-        {
-            "type":"display_ip",
-            "text": ""
+            "type":"adress",
+            "text":"Enter port number"
         }
     ]
 }

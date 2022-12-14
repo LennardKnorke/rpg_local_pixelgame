@@ -43,17 +43,17 @@ while RUNNING:
     next = Menu(WINDOW, SCREEN_SIZE, CLOCK, GAME_FONT)
     #Based on Menu input changed between ending the game, running game as a client or server host
     #IF 0 End Application
-    if next == 0:
+    if next[0] == 0:
         RUNNING = False
     #If 1, start adventure as host
-    elif next == 1:
-        pass
+    elif next[0] == 1:
+        RUNNING = False
     #If 2, join adventure as client
-    elif next == 2:
+    elif next[0] == 2:
         pass
     #If 3, run Versus maps? (Big construction)
-    elif next == 3:
-        pass
+    elif next[0] == 3:
+        RUNNING = False
 
 
 
