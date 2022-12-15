@@ -17,11 +17,7 @@ Main Folder
   
   vsmaps.json         saves information about each vs level
   weapon_config.json  contains all informations about current weapons
-  options.json        saves user settings and the currently chosen profile
-  
   /Audio              not organized. supposed to contain all the necessary audio files
-  /Profiles         
-    Lennard.json      saves player level, weapons in inventory, current ingame level
   /Sprites            png for the game
     /adventure        shall contain for each level a folder with the necessary pngs in it
     /Player           player sprites
