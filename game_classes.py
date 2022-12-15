@@ -3,8 +3,6 @@ import os
 import json
 from config_func import *
 
-class Game_Application():
-    pass
 class Player(pygame.sprite.Sprite):
     pass
 
@@ -12,7 +10,8 @@ class Menu_button(pygame.sprite.Sprite):
     def __init__(self, button_type, text, SCREEN_SIZE, index, FONT, assigned_layer, ip_adress = None):
         pygame.sprite.Sprite.__init__(self)
         self.button_type = button_type
-        self.button_text = text
+        self.og_text = text
+        self.button_text = self.og_text
         self.menu_layer = assigned_layer
         self.index = index
         self.SCREEN_SIZE = SCREEN_SIZE
@@ -149,6 +148,7 @@ def Menu(SCREEN, SCREEN_SIZE, CLOCK, FONT):
                     #if currently the mouse is not activated, activate it again
                     elif ACTIVE_MOUSE == False:
                         ACTIVE_MOUSE = True    
+                        user_input = ""
                     #Or go back 1 page
                     else:
                         Current_layer -= 1
