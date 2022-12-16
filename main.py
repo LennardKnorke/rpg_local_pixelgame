@@ -1,7 +1,8 @@
-import pygame, os, json, ctypes
+import pygame
 from config_func import *
 from server import *
 from game_classes import *
+from menu import *
 #Game Loop
     #Update window
     #Read input
@@ -25,7 +26,7 @@ from game_classes import *
             #Start Game Loop
     #Exit
 #Some Base Values, which wont change!
-
+pygame.init()
 SCREEN_SIZE = get_monitor_specs()
 SCREEN_HEIGHT = SCREEN_SIZE[1]
 SCREEN_WIDTH = SCREEN_SIZE[0]
@@ -33,7 +34,6 @@ FPS = 30
 CLOCK = pygame.time.Clock()
 MUSICBOX = pygame.mixer.init()
 
-pygame.init()
 pygame.font.init()
 GAME_FONT = pygame.font.Font('sprites/IMMORTAL.ttf', int(32*(SCREEN_SIZE[0] / 1920)))
 WINDOW = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -47,10 +47,11 @@ while RUNNING:
         RUNNING = False
     #If 1, start adventure as host
     elif next[0] == 1:
-        RUNNING = False
+        ADVENTURE(hosting = True, ip = next[1], port = [2], SCREEN = WINDOW, SCREEN_SIZE = SCREEN_SIZE, clock = CLOCK, font_render = GAME_FONT)
     #If 2, join adventure as client
     elif next[0] == 2:
-        pass
+        ADVENTURE(hosting = False, ip = next[1], port = [2], SCREEN = WINDOW, SCREEN_SIZE = SCREEN_SIZE, clock = CLOCK, font_render = GAME_FONT)
+
     #If 3, run Versus maps? (Big construction)
     elif next[0] == 3:
         RUNNING = False
