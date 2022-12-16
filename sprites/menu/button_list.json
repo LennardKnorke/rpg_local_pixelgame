@@ -1,42 +1,42 @@
 {
     "Layer_0":[
         {
-        "type":"default",
+        "default":true,
         "text":"Play"
         },
         {
-        "type": "default",
+        "default":true,
         "text": "Exit"
         }
     ],
     "Layer_1":[
         {
-        "type":"default",
+        "default":true,
         "text": "Adventure"
         },
         {
-            "type":"default",
-            "text":"Versus Mode"
+        "default":true,
+        "text":"Versus Mode"
         }
     ],
     "Layer_2":[
         {
-            "type":"default",
-            "text":"Host"
+        "default":true,
+        "text":"Host"
         },
         {
-            "type":"default",
-            "text":"Join"
+        "default":true,
+        "text":"Join"
         }
     ],
     "Layer_3":[
         {
-            "type":"adress",
-            "text":"Enter local Ip adress"
+        "default":false,
+        "text":"Enter local Ip adress"
         }, 
         {
-            "type":"adress",
-            "text":"Enter port number"
+        "default":false,
+        "text":"Enter port number"
         }
     ]
 }

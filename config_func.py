@@ -44,12 +44,9 @@ def get_monitor_specs():
     return screen_size
 
 
-adres = ["192.168.2.199", "8888"]
-adres2 = ["192.168.2.199", "8.88"]
-adres3 = ["192.1682199", "8888"]
-
-valid_ip(adres)
-valid_ip(adres2)
-valid_ip(adres3)
-
-"1" < adres[0][0] 
+#if event.key == pygame.K_BACKSPACE and ACTIVE_MOUSE == False and Current_layer == 3:
+#    user_input = user_input[:-1]
+#elif ACTIVE_MOUSE == False and Current_layer == 3:
+#    user_input += event.unicode
+#    for sprite in pygame.sprite.spritecollide(MOUSE, Layers[Current_layer], False):
+#        sprite.update_text(user_input)
