@@ -33,7 +33,7 @@ FPS = 30
 CLOCK = pygame.time.Clock()
 #Used to play
 pygame.mixer.init()
-#Used to render text
+#Used to render textq
 pygame.font.init()
 GAME_FONT = pygame.font.Font('sprites/IMMORTAL.ttf', int(32*(SCREEN_SIZE[0] / 1920)))
 

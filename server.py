@@ -14,7 +14,7 @@ def check_port(ip,port_number):
 
 class Lokal_Server:
     def __init__(self, ip, port):
-        self.local_name = find_local_host()[0]
+        self.local_name = socket.gethostname()
         self.local_ip = ip
         self.port = port #CHANGE! make it manual!
         self.adress = (self.local_ip, self.port)
