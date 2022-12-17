@@ -42,11 +42,3 @@ def get_monitor_specs():
     tmp = ctypes.windll.user32
     screen_size = (tmp.GetSystemMetrics(0), tmp.GetSystemMetrics(1))
     return screen_size
-
-
-#if event.key == pygame.K_BACKSPACE and ACTIVE_MOUSE == False and Current_layer == 3:
-#    user_input = user_input[:-1]
-#elif ACTIVE_MOUSE == False and Current_layer == 3:
-#    user_input += event.unicode
-#    for sprite in pygame.sprite.spritecollide(MOUSE, Layers[Current_layer], False):
-#        sprite.update_text(user_input)
