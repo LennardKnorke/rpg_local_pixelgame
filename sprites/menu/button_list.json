@@ -12,16 +12,6 @@
     "Layer_1":[
         {
         "default":true,
-        "text": "Adventure"
-        },
-        {
-        "default":true,
-        "text":"Versus Mode"
-        }
-    ],
-    "Layer_2":[
-        {
-        "default":true,
         "text":"Host"
         },
         {
@@ -29,7 +19,7 @@
         "text":"Join"
         }
     ],
-    "Layer_3":[
+    "Layer_2":[
         {
         "default":false,
         "text":"Enter local Ip adress"

@@ -1,8 +1,9 @@
 import pygame
 from config_func import *
-from server import *
 from local_game import *
 from menu import *
+from multiprocessing import Process
+import server
 #Game Loop
     #Update window
     #Read input
@@ -21,39 +22,82 @@ from menu import *
                 #Start Game Loop
                 #at the end of the game loop exit all servers and based on command return to menu or exit
 
+    
+
+if __name__ == '__main__':
+    #get ip-4 of mashine and prepare 2 socket for each an own port and remember them
+    #Use one as a client socket to connect to a host
+    #Use other if you want to host the server which gets started in a seperate process!
+    HOST_SOCKET = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    CLIENT_SOCKET = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    LOKAL_IP = find_local_host()
+    HOST_IP = LOKAL_IP
+    searching_ports = [True, True]
+    print("Pc Ip: ", LOKAL_IP)
+    while searching_ports[0] == True or searching_ports[1] == True:
+        if searching_ports[0] == True:#search port for client
+            try:
+                CLIENT_SOCKET.bind((LOKAL_IP, 0))
+                CLIENT_PORT = CLIENT_SOCKET.getsockname()[1]
+                print("Client_port: ", CLIENT_PORT)
+                searching_ports[0] = False
+            except:
+                pass
+        if searching_ports[1] == True:#search port for client
+            try:
+                HOST_SOCKET.bind((LOKAL_IP, 0))
+                HOST_PORT = HOST_SOCKET.getsockname()[1]
+                print("As needed server port: ", HOST_PORT)
+                searching_ports[1] = False
+            except:
+                pass
+        print("Bug?")
+    print(CLIENT_PORT, HOST_PORT)
+    server_process = Process(target = server.server_main, args = (HOST_IP, HOST_PORT, HOST_SOCKET))
+    host_ip_cpy = HOST_IP
+    host_port_cpy = HOST_PORT
+    #Setting windows specks
+    pygame.init()
+    pygame.mixer.init()
+    pygame.font.init()
+    SCREEN_SIZE = get_monitor_specs()
+    creator_to_user_ratio_width  = SCREEN_SIZE[0] / 1920
+    creator_to_user_ratio_height  = SCREEN_SIZE[1] / 1080
+    SCREEN_RATIOS = (creator_to_user_ratio_width, creator_to_user_ratio_height)
+    WINDOW = pygame.display.set_mode((SCREEN_SIZE[0], SCREEN_SIZE[1]))
+    FPS = 30
+    CLOCK = pygame.time.Clock()
+    GAME_FONT = pygame.font.Font('sprites/IMMORTAL.ttf', int(32 * creator_to_user_ratio_width))
+    pygame.mouse.set_visible(False)
 
 
-#Getting/setting some base specs used to process the window
-pygame.init()
-SCREEN_SIZE = get_monitor_specs()
-SCREEN_HEIGHT = SCREEN_SIZE[1]
-SCREEN_WIDTH = SCREEN_SIZE[0]
-WINDOW = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-FPS = 30
-CLOCK = pygame.time.Clock()
-#Used to play
-pygame.mixer.init()
-#Used to render textq
-pygame.font.init()
-GAME_FONT = pygame.font.Font('sprites/IMMORTAL.ttf', int(32*(SCREEN_SIZE[0] / 1920)))
-
-pygame.mouse.set_visible(False)
-RUNNING = True
-while RUNNING:
-    main_arguments = Menu(WINDOW, SCREEN_SIZE, CLOCK, GAME_FONT)
-    #Based on Menu input changed between ending the game, running game as a client or server host
-    #IF 0 End Application
-    if main_arguments[0] == 0:
-        RUNNING = False
-    #If 1, start adventure as host
-    elif main_arguments[0] == 1:
-        adventure(hosting = True, ip = main_arguments[1], port = [2], SCREEN = WINDOW, SCREEN_SIZE = SCREEN_SIZE, clock = CLOCK, font_render = GAME_FONT, Player_number = 0)
-    #If 2, join adventure as client
-    elif main_arguments[0] == 2:
-        adventure(hosting = False, ip = main_arguments[1], port = [2], SCREEN = WINDOW, SCREEN_SIZE = SCREEN_SIZE, clock = CLOCK, font_render = GAME_FONT)
-
-    #If 3, run Versus maps? (Big construction). Do later or do we need it?
-    elif main_arguments[0] == 3:
-        RUNNING = False
-
-pygame.quit()
+    APP_RUNNING = True
+    while APP_RUNNING:
+        main_arguments = Menu(WINDOW, SCREEN_SIZE, SCREEN_RATIOS, CLOCK, GAME_FONT)
+        #main_arguments[keeprunning?_bool, shall_I_host?_bool, host_ip(in case of joining), host port] len 4
+        if main_arguments[0] == False:
+            APP_RUNNING = False
+        else:
+            if main_arguments[1] == True:
+                server_process.start()
+            else:
+                HOST_IP = main_arguments[2]
+                HOST_PORT = main_arguments[3]
+            Game = adventure(window = WINDOW, window_size = SCREEN_SIZE, window_ratios = SCREEN_RATIOS, clock = CLOCK, font_render = GAME_FONT, c_socket = CLIENT_SOCKET,c_ip = LOKAL_IP, c_port = CLIENT_PORT, host_ip = HOST_IP, host_port = HOST_PORT)
+            print(Game.connect_client())
+            if Game.connected:
+                Game.run()
+            #After the game aint running anymore, check if the desire was to quit?
+            #Else: Fix the default ip, host
+            #TO DO: Rejoining?  socket rebinding necessary?
+            if Game.quit:
+                APP_RUNNING = False
+        if APP_RUNNING:
+            HOST_IP = host_ip_cpy
+            HOST_PORT = host_port_cpy
+        if server_process.is_alive():
+            server_process.kill()
+    HOST_SOCKET.close()
+    CLIENT_SOCKET.close()
+    pygame.quit()
+    
