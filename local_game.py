@@ -3,7 +3,7 @@ import os
 from config_func import *
 import pickle
 import time
-from server import find_local_host
+
 #now its gets funny
 #each lokal client does not need process information LOKALLY about enemy ai and stuff
 #The lokal client only receives a list from the server with 
@@ -42,13 +42,15 @@ class adventure():
         self.screen_size = window_size
         self.clock = clock
         self.mouse_pos = pygame.mouse.get_pos()
-        
         #Game_states
+        self.player_num = 0
         self.quit = False
         #Sprites loading
         #Prepare in game features for all levels
         self.playersprite = visual_sprite(type=0, ratio = self.screen_ratios, screen_size=self.screen_size)#Load character, based on user number
         self.level_sprites = pygame.sprite.Group()#Will contain all sprites relevant for the current level
+        self.load_background = pygame.transform.scale(pygame.image.load("sprites/loading.png"), (self.screen_size[0], self.screen_size[1]))
+        self.load_background_rect = self.load_background.get_rect()
         #State of user input
         self.mouse_pressed = False
         self.w_jump = False
@@ -57,28 +59,38 @@ class adventure():
         self.space_defend = False
         self.shift_special = False
         self.f_healing = False
-        self.level = 0
 
     #Receive feedback from server about the level as an intro
     def connect_client (self):
         print("Attempting to connect client")
         connection_attempts = 5
         timer = time.time()
-        while connection_attempts > 0:
-            if ((time.time() - timer) >= 7):
+        while connection_attempts > 0 and self.connected == False:
+            self.clock.tick(30)
+            self.screen.blit(self.load_background, self.load_background_rect)
+            if ((time.time() - timer) >= 10):
                 try:
                     self.client_socket.connect((self.host_target_ip, self.host_target_port))
                     self.connected = True
-                    print("Successfull binding")
-                    return pickle.load(self.client_socket.recv(2048))
+                    try:
+                        self.client_socket.sendall(b"First message arrived :)")
+                        data = self.client_socket.recv(1024)
+                        print(data)
+                    except:
+                        print("Connected, but data exchange failed")
+                        self.connected = False
+                        connection_attempts = 0
                 except:
                     pass
                 connection_attempts -= 1
-                if connection_attempts > 0:
-                    print(f"Connecting Failed. {connection_attempts} attempts left. Trying again in a few seconds")
-                else:
-                    print("Failed to connect")
+                if self.connected == False:
+                    if connection_attempts > 0:
+                        print(f"Connecting Failed. {connection_attempts} attempts left. Trying again in a few seconds")
+                    else:
+                        print("Failed to connect")
+                    connection_attempts -= 1
                 timer = time.time()
+            pygame.display.update()
 
     def send_info(self, data):
         try:
@@ -86,6 +98,27 @@ class adventure():
             return pickle.loads(self.client.recv(2048))
         except:
             print(socket.error)
+    def convert_input(self):
+        input_list = [self.mouse_pos, self.mouse_pressed, self.w_jump, self.a_left, self.d_right, self.shift_special, self.space_defend, self.f_healing]
+        r = len(input_list)
+        data = ''
+        for idx in range(r):
+            if idx == 0:
+                data += input_list[idx][0]
+                data += ','
+                data += input_list[idx][1]
+            elif idx == r - 1:
+                if input_list[idx]:
+                    data += 't'
+                else:
+                    data += 'f'
+            else:
+                if input_list[idx]:
+                    data += 't'
+                else:
+                    data += 'f'
+                data += ','
+        return data
     #empties the sprite list of the current level and load in the new one
     def import_sprites(self, sprites):
         self.level_sprites.empty()
@@ -98,17 +131,17 @@ class adventure():
         #Send information about input to server
         #Receive info from server
         #Start new iteration updating visual output based on server feedback
-        input_list = []
+        input_to_send = ""
         while self.running:
             self.clock.tick(30)
             #DRAW
-            self.level_sprites.draw(self.SCREEN)
+            self.level_sprites.draw(self.screen)
             #Get input
             self.mouse_pos = pygame.mouse.get_pos()
             for input in pygame.event.get():
                 if input.type == pygame.QUIT:
                     self.level = -1
-                    self.Running == False
+                    self.running == False
                 elif input.type == pygame.MOUSEBUTTONDOWN:
                     self.mouse_pressed = True
                 elif input.type == pygame.KEYDOWN:
@@ -139,7 +172,7 @@ class adventure():
                         self.shift_special = False
                     elif input.key == pygame.K_f:
                         self.f_healing = False
-            input_list = [self.mouse_pos, self.mouse_pressed, self.w_jump, self.a_left, self.d_right, self.shift_special, self.space_defend, self.f_healing]
+            input_to_send = self.convert_input()
             #print(input_list)
             #Server magic missing here!
             pygame.display.update()

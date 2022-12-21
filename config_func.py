@@ -3,7 +3,12 @@ import json
 import ctypes
 import socket
 
-
+#search for the local ip adress. Recommend but leave it open to change in server!
+def find_local_host():
+    local_mashine_name = socket.gethostname()
+    local_mashine_adress = socket.gethostbyname(local_mashine_name)
+    return (local_mashine_adress)
+    
 def read_options():
     return json.load(open('options.json', 'r'))
 
