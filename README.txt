@@ -4,7 +4,6 @@ Aims:
 - Lern Github
 - Game development in Python :))))))
   - Singleplayer/ Coop Campaign
-  - Vs Mode
 - Networks
 - (Random Level Generation?)
 
@@ -15,7 +14,6 @@ Main Folder
   game_classes.py     contains game classes
   server.py           server on which the state information of the game are running
   
-  vsmaps.json         saves information about each vs level
   weapon_config.json  contains all informations about current weapons
   /Audio              not organized. supposed to contain all the necessary audio files
   /Sprites            png for the game
@@ -24,7 +22,6 @@ Main Folder
     /weapons
     /enemies
     /menu
-    /vsmaps
 
 General Notes:
 - Game engine runs in pygame. Avoid (python) for loop to examine sprite interaction
