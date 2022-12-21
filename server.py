@@ -4,14 +4,6 @@ from _thread import *
 import sys
 
 
-
-
-#search for the local ip adress. Recommend but leave it open to change in server!
-def find_local_host():
-    local_mashine_name = socket.gethostname()
-    local_mashine_adress = socket.gethostbyname(local_mashine_name)
-    return (local_mashine_adress)
-
 class Lokal_Server:
     def __init__(self, ip, port, serv_sock):
         self.MAX_PLAYERS = 4
@@ -23,9 +15,11 @@ class Lokal_Server:
         #Marks which players connected and updates them
         self.current_clients = 0
         self.player_slots = [(0,False), (1,False), (2, False), (3,False)]
-    def threaded_client(self, connection, player_num  = "HI"):
-        connection.sendall(str.encode("Connected"))
+        self.input_user_template = [[0,0], False, False,False,False,False,False,False]
+    def threaded_client(self, connection, player_num):
+        connection.sendall(str.encode(player_num))
         reply = str(player_num)
+        user_input = self.input_user_template
         while True:
             try:
                 incoming = connection.recv(2048)
@@ -42,10 +36,10 @@ class Lokal_Server:
     
     def run(self):
         print("Waiting for connections")
+        lowest_play_idx = 0
         while True:
             new_con, con_adress = self.server_socket.accept()
-            print("New connection: ", con_adress)
-            start_new_thread(self.threaded_client,(new_con,))
+            start_new_thread(self.threaded_client,(new_con, lowest_play_idx))
 
 
 
@@ -53,4 +47,5 @@ class Lokal_Server:
 def server_main(ip, port, assigned_socket):
     serv = Lokal_Server(ip = ip, port = port, serv_sock = assigned_socket)
     serv.run()
-    print("server run out")
+
+
