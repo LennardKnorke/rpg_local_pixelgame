@@ -25,9 +25,8 @@ import server
     
 
 if __name__ == '__main__':
-    #get ip-4 of mashine and prepare 2 socket for each an own port and remember them
+    #get ip-4 of mashine and prepare 2 sockets to reserver a portnumber for client and server sockets
     #Use one as a client socket to connect to a host
-    #Use other if you want to host the server which gets started in a seperate process!
     HOST_SOCKET = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     CLIENT_SOCKET = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     LOKAL_IP = find_local_host()
@@ -52,6 +51,7 @@ if __name__ == '__main__':
             except:
                 pass
     server_process = Process(target = server.server_main, args = (HOST_IP, HOST_PORT, HOST_SOCKET))
+    #Falls raus und wieder reingegangen wird soll die original host ip gesaved bleiben
     host_ip_cpy = HOST_IP
     host_port_cpy = HOST_PORT
     #Setting windows specks
@@ -77,12 +77,17 @@ if __name__ == '__main__':
         if main_arguments[0] == False:
             APP_RUNNING = False
         else:
+            #If host, start server
             if main_arguments[1] == True:
                 server_process.start()
+            #otherwise save the host ip and port number
             else:
                 HOST_IP = main_arguments[2]
                 HOST_PORT = main_arguments[3]
-            Game = adventure(window = WINDOW, window_size = SCREEN_SIZE, window_ratios = SCREEN_RATIOS, clock = CLOCK, font_render = GAME_FONT, c_socket = CLIENT_SOCKET,c_ip = LOKAL_IP, c_port = CLIENT_PORT, host_ip = HOST_IP, host_port = HOST_PORT)
+
+            Game = adventure(window = WINDOW, 
+            window_size = SCREEN_SIZE, 
+            window_ratios = SCREEN_RATIOS, clock = CLOCK, font_render = GAME_FONT, c_socket = CLIENT_SOCKET,c_ip = LOKAL_IP, c_port = CLIENT_PORT, host_ip = HOST_IP, host_port = HOST_PORT)
             Game.connect_client()
             if Game.connected:
                 Game.run()
