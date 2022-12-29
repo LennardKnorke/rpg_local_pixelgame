@@ -4,25 +4,39 @@ from local_game import *
 from menu import *
 from multiprocessing import Process
 import server
-#Game Loop
-    #Update window
-    #Read input
-    #send to server
-        #Server Magic
-    #Receive from server
 
-#   -   Start
-#Load window and pygame features
-    #   -   Menu
-    #Play
-        #Decide between adventure and vs mode
-            #decide to join or host
-                    #Run server
-                #Join as Client
-                #Start Game Loop
-                #at the end of the game loop exit all servers and based on command return to menu or exit
+###Structure###
 
-    
+#Main()
+    #1.
+    #Find local ip, secure ports for client and host sockets
+    #Get screen details
+    #Other details helpful for the application on each respective pc
+    #2. 
+    #Menu
+    #(Profile management! implement back again)
+    #Play or Exit
+        #If Play:
+        #Host or Join
+        #If Host, exit menu and start the shit show
+        #If join, enter ip and port
+    #3. Game Cycle
+        #If Hosting, start server process. SEPERATE PROCESS STARTS HERE!!:
+            #runs server_main function from server.py
+            #create a server class instance
+            #wait for incoming connections
+                #For each connection start a thread in which in client keeps sending and receiving
+            #As soon as the first player (the host) joins, start the game loop
+
+    #4. Game
+        #Start client. connect to host
+        #Game loop:
+            #DRAW
+            #Get Input
+            #Send input to server
+            #Get feedback from server
+            #Repeat
+
 
 if __name__ == '__main__':
     #get ip-4 of mashine and prepare 2 sockets to reserver a portnumber for client and server sockets
@@ -32,7 +46,7 @@ if __name__ == '__main__':
     LOKAL_IP = find_local_host()
     HOST_IP = LOKAL_IP
     searching_ports = [True, True]
-    print("Pc Ip: ", LOKAL_IP)
+    print("Local Ip: ", LOKAL_IP)
     while searching_ports[0] == True or searching_ports[1] == True:
         if searching_ports[0] == True:#search port for client
             try:
@@ -51,7 +65,7 @@ if __name__ == '__main__':
             except:
                 pass
     server_process = Process(target = server.server_main, args = (HOST_IP, HOST_PORT, HOST_SOCKET))
-    #Falls raus und wieder reingegangen wird soll die original host ip gesaved bleiben
+    #keep a copy of reserved host socket port!
     host_ip_cpy = HOST_IP
     host_port_cpy = HOST_PORT
     #Setting windows specks
@@ -85,9 +99,7 @@ if __name__ == '__main__':
                 HOST_IP = main_arguments[2]
                 HOST_PORT = main_arguments[3]
 
-            Game = adventure(window = WINDOW, 
-            window_size = SCREEN_SIZE, 
-            window_ratios = SCREEN_RATIOS, clock = CLOCK, font_render = GAME_FONT, c_socket = CLIENT_SOCKET,c_ip = LOKAL_IP, c_port = CLIENT_PORT, host_ip = HOST_IP, host_port = HOST_PORT)
+            Game = adventure(window = WINDOW, window_size = SCREEN_SIZE, window_ratios = SCREEN_RATIOS, clock = CLOCK, font_render = GAME_FONT, c_socket = CLIENT_SOCKET,c_ip = LOKAL_IP, c_port = CLIENT_PORT, host_ip = HOST_IP, host_port = HOST_PORT)
             Game.connect_client()
             if Game.connected:
                 Game.run()
