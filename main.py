@@ -20,7 +20,7 @@ import server
         #Host or Join
         #If Host, exit menu and start the shit show
         #If join, enter ip and port
-    #3. Game Cycle
+    #3. Server Settings
         #If Hosting, start server process. SEPERATE PROCESS STARTS HERE!!:
             #runs server_main function from server.py
             #create a server class instance
