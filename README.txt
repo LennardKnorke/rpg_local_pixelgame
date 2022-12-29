@@ -28,7 +28,6 @@ General Notes:
 - to do: reading user input using pygame, translate (as string?) to send into network and convert back so the server can make adjustments
 - Game play features (up to change):
     - 2d sidescroller
-    - since there is no artistic talent in the group the enemies and player sprites will be cleverly merged to compensate for missing artists in our rows
     - per finished level distribute a skill point after each level.
     - variation comes through leveling and weapons
     - the question. restart on every death? like "enter the gungeon", "castlevania" or a saving everything? 
