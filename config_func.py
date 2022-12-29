@@ -15,6 +15,10 @@ def read_options():
 
 
 def get_monitor_specs():
-    tmp = ctypes.windll.user32
-    screen_size = (tmp.GetSystemMetrics(0), tmp.GetSystemMetrics(1))
-    return screen_size
+    #Problems getting screen size on different systems (linux vs windows)
+    if os.name == "nt":
+        tmp = ctypes.windll.user32
+        screen_size = (tmp.GetSystemMetrics(0), tmp.GetSystemMetrics(1))
+        return screen_size
+    elif os.name == "posix":
+        return "cancer"
