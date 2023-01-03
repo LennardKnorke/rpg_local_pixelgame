@@ -8,15 +8,16 @@ from _thread import *
 
 
 class Lokal_Server:
-    def __init__(self, ip, port, serv_sock):
+    def __init__(self, serv_sock:socket):
+        self.ssocket = serv_sock
         self.MAX_PLAYERS = 4
-        self.server_ip = ip
-        self.server_port = port
-        self.server_socket = serv_sock
-        self.server_socket.listen(self.MAX_PLAYERS)
-        self.level = 0#start with tutorial and keep increasing until the host disconnected
+        self.ip = self.ssocket.getsockname()[0]
+        self.port = self.ssocket.getsockname()[1]
+        self.ssocket.listen(self.MAX_PLAYERS)
         #Marks which players connected and updates them
         self.current_clients = 0
+        self.hostJoined = False
+        self.worldRunning = False
         self.player_slots = [False, False, False, False]
         #Default sheet (mouse x coordinate, mouse y coordinate), mouse pressed, move left, move right, jump....
         self.input_user_template = [[0,0], False, False,False,False,False,False,False]
@@ -24,20 +25,13 @@ class Lokal_Server:
         #Save an input for each POSSIBLE player
         for i in range(4):
             self.user_inputs.append(self.input_user_template)
+    #seperate thread in which the game loop is running on the server
     def serv_game_thread (self):
         self.level = 0
-        while self.player_slots[0]:
-            if self.player_slots[3]:
-                print(self.user_inputs[0], self.user_inputs[1], self.user_inputs[2], self.user_inputs[3])
-            elif self.player_slots[2]:
-                print(self.user_inputs[0], self.user_inputs[1], self.user_inputs[2])
-            elif self.player_slots[1]:
-                print(self.user_inputs[0], self.user_inputs[1])
-            elif self.player_slots[0]:
-                print(self.user_inputs[0])
-            else:
-                pass
-    def threaded_client(self, connection, player_num):
+        while self.worldRunning:
+            pass
+            
+    def threaded_client(self, connection:socket.socket, player_num:int):
         connection.sendall(str.encode(str(player_num)))
         reply = 'encoded file to send'
         while True:
@@ -58,15 +52,19 @@ class Lokal_Server:
                 #Send back stuff
                 connection.sendall(str.encode(reply))
             except:
+                print("Connection lost")
                 break 
         self.player_slots[player_num] = False
     #Here: Run the level thread! then start waiting for connections and as soon as player 0 joins, start the level threat
     def run(self):
-        print("Waiting for connections")
+        print(f"Server running on {self.ip}/ {self.port}")
         next_player_idx = 0
-        host_joined = False
+        
         while True:
-            new_con, con_adress = self.server_socket.accept()
+            print("Waiting for connections")
+            new_con, con_adress = self.ssocket.accept()
+            print(f"type: ", type(new_con))
+            print(f"Player {next_player_idx + 1} joined the server")
             #update which players joined and which slot to assign next
             if self.player_slots[0] == False:
                 next_player_idx = 0
@@ -81,9 +79,9 @@ class Lokal_Server:
                 next_player_idx = 3
                 self.player_slots[3] = True
             #Checks if the host has joined and starts game thread
-            if next_player_idx == 0 and host_joined == False:
-                host_joined = True
-                start_new_thread(self.serv_game_thread,())
+            if next_player_idx == 0 and self.hostJoined == False:
+                self.hostJoined = True
+                start_new_thread(self.serv_game_thread, ())
             #Start client threat
             start_new_thread(self.threaded_client,(new_con, next_player_idx))
 
@@ -92,8 +90,8 @@ class Lokal_Server:
 
 
 #Functions called in the main script as part of a new process.  Creates on a given socket the server.
-def server_main(ip, port, assigned_socket):
-    serv = Lokal_Server(ip = ip, port = port, serv_sock = assigned_socket)
+def server_main(assigned_socket:socket, amIGod = False):
+    serv = Lokal_Server(serv_sock = assigned_socket)
     serv.run()
 
 
