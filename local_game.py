@@ -14,7 +14,7 @@ import time
 
 
 class visual_sprite(pygame.sprite.Sprite):
-    def __init__ (self, type, ratio, screen_size, player_numb = -1):
+    def __init__ (self, type:int, ratio:tuple, screen_size:tuple, player_numb = -1):
         pygame.sprite.Sprite.__init__(self)
         if type == 0:
             self.image = pygame.image.load("sprites/char/base_01.png")
@@ -26,13 +26,11 @@ class visual_sprite(pygame.sprite.Sprite):
 #Class is easier manage
 #Local adventure application
 class adventure():
-    def __init__(self, window, window_size, window_ratios, clock, font_render, c_socket, c_ip, c_port, host_ip, host_port):
+    def __init__(self, window:pygame.display, window_size:tuple, window_ratios:tuple, clock:pygame.time.Clock, font_render: pygame.font.Font, c_socket:socket, c_ip:str, c_port:int):
         #Save online features
-        self.client_socket = c_socket
-        self.client_ip = c_ip
-        self.c_port = c_port
-        self.host_target_ip = host_ip
-        self.host_target_port = host_port
+        self.localClientSock = c_socket
+        self.localIp = c_ip
+        self.clientPort = c_port
         self.connected = False#needs to be true in order to run and keeps track of connection with host
         
         #Pygame features
@@ -61,10 +59,11 @@ class adventure():
         self.f_healing = False
 
     #Receive feedback from server about the level as an intro
-    def connect_client (self):
-        print("Attempting to connect client")
+    def connect_client (self, host_port:int):
+        print(f"{self.localIp}. Attempting to connect client to server port: {host_port}")
         connection_attempts = 5
         timer = time.time()
+        timer -= 10
         while connection_attempts > 0 and self.connected == False:
             #Update screen to connection/loading screen
             self.clock.tick(30)
@@ -73,28 +72,27 @@ class adventure():
             if ((time.time() - timer) >= 10):
                 #Try to connect
                 try:
-                    self.client_socket.connect((self.host_target_ip, self.host_target_port))
-                    self.connected = True
+                    self.localClientSock.connect((self.localIp, host_port))
+                    print("Found Host")
                     #If succesfully connected. make data exchange
-                    try:
-                        self.client_socket.sendall(str.encode(self.convert_input()))
-                        data = self.client_socket.recv(2048)
-                        self.player_num = int(data.decode("utf-8"))
-                    except:
-                        print("Connected, but data exchange failed")
-                        self.connected = False
-                        connection_attempts = 0
+                    self.localClientSock.sendall(str.encode(self.convert_input()))
+                    data = self.localClientSock.recv(2048)
+                    self.player_num = int(data.decode("utf-8"))
+                    print(f"Client received player number: {self.player_num + 1}")
+                    self.connected = True
+                    return
+
                 except:
-                    pass
-            
-            #HANDLE Connection failures
-                connection_attempts -= 1
-                if self.connected == False:
-                    if connection_attempts > 0:
-                        print(f"Connecting Failed. {connection_attempts} attempts left. Trying again in a few seconds")
-                    else:
-                        print("Failed to connect")
+                    #HANDLE Connection failures
                     connection_attempts -= 1
+                    if self.connected == False:
+                        if connection_attempts > 0:
+                            print(f"Connecting Failed. {connection_attempts} attempts left. Trying again in a few seconds")
+                        else:
+                            print("Failed to connect")
+                            return
+            
+            
                 timer = time.time()
             pygame.display.update()
 
@@ -173,8 +171,8 @@ class adventure():
                     elif input.key == pygame.K_f:
                         self.f_healing = False
             input_to_send = self.convert_input()
-            self.client_socket.sendall(input_to_send.encode("utf-8"))
-            incoming_stream = self.client_socket.recv(2048)
+            self.localClientSock.sendall(input_to_send.encode("utf-8"))
+            incoming_stream = self.localClientSock.recv(2048)
             #Server magic missing here!
             pygame.display.update()
         #Update at the end to either go back to menu (0) end programm (-1) or anythin above to play the next level
