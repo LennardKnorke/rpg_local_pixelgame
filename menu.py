@@ -4,7 +4,7 @@ import json
 from config_func import *
 
 class Menu_button(pygame.sprite.Sprite):
-    def __init__(self, button_type, text, screen_size, index, font, assigned_layer):
+    def __init__(self, button_type:bool, text:str, screen_size:tuple, index:int, font:pygame.font.Font, assigned_layer:int):
         pygame.sprite.Sprite.__init__(self)
         self.default_button_bool = button_type#type? default: text stays, the other varies with input
         self.og_text = text#Original text off button
@@ -46,37 +46,38 @@ class Menu_button(pygame.sprite.Sprite):
         else: 
             return False
     #Given an input, updates the button text
-    def update_text (self, new_text):
+    def update_text (self, new_text:str):
         self.displayed_text = self.Font_render.render(new_text, False, (0,0,0))
         self.displayed_text_rect = self.displayed_text.get_rect()
         self.displayed_text_rect.center = (self.screen_size[0] / 2, self.screen_size[1] / (3 - self.index))
     #Annoying drawing mechanics :/
     #Cant draw the two connected images together so two draw functions called in the update function!
-    def draw_text(self, SCREEN):
+    def draw_text(self, SCREEN:pygame.display):
         SCREEN.blit(self.displayed_text, self.displayed_text_rect)
-    def draw(self, SCREEN):
+    def draw(self, SCREEN:pygame.display):
         SCREEN.blit(self.image, self.rect)
-    def update(self, SCREEN):
+    def update(self, SCREEN:pygame.display):
         self.draw(SCREEN)
         self.draw_text(SCREEN)
     def return_input(self):
         return (self.input_string_cpy)
 #Cursor
 class Mouse_Sprite(pygame.sprite.Sprite):
-    def __init__(self, mousex, mousey, screen_ratios):
+    def __init__(self, mousex:int, mousey:int, screen_ratios:tuple):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load("sprites/menu/curs.png")
         self.image = pygame.transform.scale(self.image,(40 * screen_ratios[0], 40 * screen_ratios[1]))
         self.rect = self.image.get_rect()
         self.rect.center = (mousex, mousey)
         self.mask = pygame.mask.from_surface(self.image)
-    def moving(self, x,y):
+
+    def moving(self, x:int, y:int):
         self.rect.center = (x,y)
 
 
 #Left to do: 
 #   Check IP/ Port validity
-def Menu(window, screen_size, screen_ratios, window_clock, font_render):
+def Menu(window:pygame.display, screen_size:tuple, screen_ratios:tuple, window_clock:pygame.time.Clock, font_render:pygame.font.Font):
     #json file contains all infos for each button
     #load each button and save for each menu layer
     button_list = json.load(open("Sprites/menu/button_list.json", 'r'))
